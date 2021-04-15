@@ -1,5 +1,8 @@
 package br.com.colecoes;
 
+import com.sun.javafx.binding.StringFormatter;
+import com.sun.xml.internal.ws.util.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,9 +20,13 @@ public class Main {
 
 
         List<Palavra> palavras = new ArrayList<Palavra>();
+        StringBuilder fraseOriginal = new StringBuilder();
+        List<String> postAbreviado = new ArrayList<>();
 
         while(st.hasMoreTokens()) {
             String palavra = st.nextToken();
+            fraseOriginal.append(palavra + " ");
+            postAbreviado.add(palavra);
             if(palavra.length() > 2){
                 if(palavras.stream().anyMatch(objeto -> objeto.getPalavra().equals(palavra))) {
                     palavras.forEach(objeto -> {
@@ -38,41 +45,26 @@ public class Main {
 //        [abacaxi amora quiabo acerola alecrim beterraba tomate alface arroz arroz arroz arroz arroz arroz]
         //abacaxi amora qu. acerola alecrim be. to. alface ar. ar. ar. ar. ar. ar. ar.
 
-        //arroz
-
-        /*palavras.stream().filter(objeto -> objeto.getAbreviacao() == 'a')
-                .sorted((o1, o2) -> o2.getPeso() - o1.getPeso()).forEach(System.out::println);*/
-
         for (char ch = 'a'; ch <= 'z'; ch++) {
             char letra = ch;
-
             palavras.stream().filter(objeto -> objeto.getAbreviacao() == letra)
-                    .sorted((o1, o2) -> o2.getPeso() - o1.getPeso()).peek(palavra -> {
-                        listaPalavrasAbreviadas.add(palavra);
-                        System.out.println(palavra.getAbrePonto() + " = " + palavra.getPalavra());
+                    .sorted((o1, o2) -> o2.getPeso() - o1.getPeso()).peek(objetoPalavra -> {
+                        listaPalavrasAbreviadas.add(objetoPalavra);
+                        Collections.replaceAll(postAbreviado,
+                                objetoPalavra.getPalavra(), objetoPalavra.getAbrePonto());
+                        System.out.println(objetoPalavra.getAbrePonto() + " = " + objetoPalavra.getPalavra());
             }).anyMatch(objeto -> objeto.getAbreviacao() == letra);
-
         }
-        /*for (char ch = 'a'; ch <= 'z'; ch++) {
-            char letra = ch;
-            if(listaPalavrasAbreviadas.stream().anyMatch(palavra -> palavra.getAbreviacao() == letra)) {
-                listaPalavrasAbreviadas.add(palavras.stream().filter(objeto -> objeto.getAbreviacao() == letra)
-                        .max((o1, o2) -> o1.getPeso() - o2.getPeso()).get());
-            }
-        }*/
 
+
+//        System.out.println(fraseOriginal);
+        System.out.println(String.join(" ", postAbreviado));
         System.out.println(listaPalavrasAbreviadas);
-
-
-
-
 
         //insira sua solução aqui
 
-        System.out.println("Fim");
-
     }
-    }
+}
 
 class Palavra {
     private String palavra;
